@@ -20,7 +20,7 @@ class RoomsCommands(commands.Cog):
         )
 
         channel_settings = await guild.create_text_channel(
-            name="🛠️┃настройки",
+            name="📝┃управление",
             category=category
         )
 
