@@ -8,7 +8,7 @@ def create_tables():
             "guild_id" INTEGER,
             "category_id" INTEGER,
             "channel_create_id" INTEGER,
-            "channel_setting_id" INTEGER
+            "channel_settings_id" INTEGER
         );
     """)
 

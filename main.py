@@ -13,6 +13,7 @@ def main():
 
         bot.load_extension("cogs.rooms.commands")
         bot.load_extension("cogs.rooms.events")
+        bot.load_extension("cogs.rooms.views")
         logging.debug(f"Cogs were connected.")
 
     except Exception as e:
