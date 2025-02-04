@@ -12,7 +12,7 @@ def main():
         logging.error(f"Failed to start bot. Error: {str(e)}")
         print(e)
 
-    @bot.event()
+    @bot.event
     async def on_ready():
         print("Bot is ready")
 
