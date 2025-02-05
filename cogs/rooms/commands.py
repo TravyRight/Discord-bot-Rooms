@@ -54,7 +54,7 @@ class RoomsCommands(commands.Cog):
 
         if cur.execute("SELECT COUNT(*) FROM guilds WHERE guild_id=?", (inter.guild.id,)).fetchone()[0] == 0:
             cur.execute(
-                "INSERT INTO guilds(guild_id, category_id, channel_create_id, channel_setting_id) VALUES(?, ?, ?, ?)",
+                "INSERT INTO guilds(guild_id, category_id, channel_create_id, channel_settings_id) VALUES(?, ?, ?, ?)",
                 (
                     inter.guild.id,
                     category.id,
@@ -65,7 +65,7 @@ class RoomsCommands(commands.Cog):
 
         else:
             cur.execute(
-                "UPDATE guilds SET category_id=?, channel_create_id=?, channel_setting_id=? WHERE guild_id=?",
+                "UPDATE guilds SET category_id=?, channel_create_id=?, channel_settings_id=? WHERE guild_id=?",
                 (
                     category.id,
                     channel_create.id,
