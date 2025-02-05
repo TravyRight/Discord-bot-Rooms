@@ -33,19 +33,19 @@ async def rooms_button_mute_unmute(inter: disnake.Interaction, room: disnake.Voi
     if overwrites.speak in [True, None]:
         overwrites.update(speak=False)
         embed = disnake.Embed(
-            description=f"Участник {member} замучен",
+            description=f"{member} замучен",
             color=disnake.Color.green()
         )
 
     else:
         overwrites.update(speak=True)
         embed = disnake.Embed(
-            description=f"Участник {member} размучен",
+            description=f"{member} размучен",
             color=disnake.Color.green()
         )
 
-    await channel_settings.set_permissions(
-        target=inter.user,
+    await room.set_permissions(
+        target=member,
         overwrite=overwrites
     )
 

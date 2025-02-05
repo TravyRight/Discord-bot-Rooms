@@ -1,12 +1,12 @@
 import disnake
 
 
-async def rooms_button_up(inter: disnake.Interaction, room: disnake.VoiceChannel) -> None:
+async def rooms_button_up(inter: disnake.Interaction, room: disnake.VoiceChannel, channel_create: disnake.VoiceChannel) -> None:
     await inter.response.defer()
-    await room.edit(position=0)
+    await room.edit(position=channel_create.position + 1)
 
     embed = disnake.Embed(
-        description="Комната поднята вверх",
+        description="Комната перемещена вверх",
         color=disnake.Color.green()
     )
 

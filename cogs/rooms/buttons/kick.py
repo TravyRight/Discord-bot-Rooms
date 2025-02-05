@@ -33,7 +33,7 @@ async def rooms_button_kick(inter: disnake.Interaction, room: disnake.VoiceChann
         await member.move_to(None)
 
         embed = disnake.Embed(
-            description=f"Участник {member} был кикнут",
+            description=f"Участник {member.mention} был кикнут",
             color=disnake.Color.green()
         )
 

@@ -33,19 +33,19 @@ async def rooms_button_access(inter: disnake.Interaction, room: disnake.VoiceCha
     if overwrites.connect in [True, None]:
         overwrites.update(connect=False)
         embed = disnake.Embed(
-            description=f"Участник {member} больше не сможет зайти в вашу комнату",
+            description=f"{member} больше не сможет зайти в вашу комнату",
             color=disnake.Color.green()
         )
 
     else:
         overwrites.update(connect=True)
         embed = disnake.Embed(
-            description=f"Участник {member} снова может зайти в вашу комнату",
+            description=f"{member} снова может зайти в вашу комнату",
             color=disnake.Color.green()
         )
 
-    await channel_settings.set_permissions(
-        target=inter.user,
+    await room.set_permissions(
+        target=member,
         overwrite=overwrites
     )
 

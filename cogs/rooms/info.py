@@ -10,5 +10,5 @@ buttons = {
     "mute_unmute": "🤐",
     "open_close": "🔑",
     "show_hide": "🙈",
-    "give_license": "👑",
+    "give_room": "👑",
 }
