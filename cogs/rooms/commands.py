@@ -11,6 +11,7 @@ class RoomsCommands(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(name=Localized(key="CREATE_ROOMS_NAME"), description=Localized(key="CREATE_ROOMS_DESCRIPTION"))
+    @commands.has_permissions(administrator=True)
     async def create_rooms(self, inter: disnake.ApplicationCommandInteraction):
         await inter.response.defer()
         guild = inter.guild
@@ -51,15 +52,28 @@ class RoomsCommands(commands.Cog):
             color=disnake.Color.dark_embed()
         )
 
-        cur.execute(
-            "INSERT INTO guilds(guild_id, category_id, channel_create_id, channel_setting_id) VALUES(?, ?, ?, ?)",
-            (
-                inter.guild.id,
-                category.id,
-                channel_create.id,
-                channel_settings.id
+        if cur.execute("SELECT COUNT(*) FROM guilds WHERE guild_id=?", (inter.guild.id,)).fetchone()[0] == 0:
+            cur.execute(
+                "INSERT INTO guilds(guild_id, category_id, channel_create_id, channel_setting_id) VALUES(?, ?, ?, ?)",
+                (
+                    inter.guild.id,
+                    category.id,
+                    channel_create.id,
+                    channel_settings.id
+                )
             )
-        )
+
+        else:
+            cur.execute(
+                "UPDATE guilds SET category_id=?, channel_create_id=?, channel_setting_id=? WHERE guild_id=?",
+                (
+                    category.id,
+                    channel_create.id,
+                    channel_settings.id,
+                    inter.guild.id
+                )
+            )
+
         conn.commit()
 
         view = RoomsView()
