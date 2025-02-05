@@ -13,8 +13,11 @@ def main():
 
         bot.load_extension("cogs.rooms.commands")
         bot.load_extension("cogs.rooms.events")
-        bot.load_extension("cogs.rooms.views")
         logging.debug(f"Cogs were connected.")
+
+        # connect locale
+        bot.i18n.load("locale/")
+        logging.debug(f"locale were loaded.")
 
     except Exception as e:
         logging.error(f"Failed to start bot. Error: {str(e)}")
