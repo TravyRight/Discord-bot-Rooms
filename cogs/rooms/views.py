@@ -29,7 +29,7 @@ class DialogButtons(disnake.ui.View):
         rooms.update({self.member.id: room_id})
 
         embed = disnake.Embed(
-            description=f"**Права** на комнату **переданы** участнику {self.member.mention}?",
+            description=f"**Права** на комнату **переданы** пользователю {self.member.mention}",
             color=disnake.Color.green()
         )
 
@@ -38,7 +38,7 @@ class DialogButtons(disnake.ui.View):
     @disnake.ui.button(label="Отмена", style=disnake.ButtonStyle.red)
     async def cancel(self, button: disnake.ui.Button, inter: disnake.MessageInteraction):
         embed = disnake.Embed(
-            description=f"**Права** на комнату **не будут переданы** участнику {self.member.mention}?",
+            description=f"**Права** на комнату **не будут переданы** пользователю {self.member.mention}",
             color=disnake.Color.green()
         )
 

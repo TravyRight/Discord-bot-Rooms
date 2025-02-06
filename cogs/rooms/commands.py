@@ -2,6 +2,7 @@ import disnake
 from disnake.ext import commands
 from disnake import Localized
 
+from cogs.rooms.info import buttons
 from cogs.rooms.views import RoomsView
 from config import conn, cur
 
@@ -35,22 +36,23 @@ class RoomsCommands(commands.Cog):
             category=category
         )
 
-        embed = disnake.Embed(
-            title="Настройки",
-            description="**Выберите, что хотите изменить и нажмите на нужную кнопку**\n"
-                        "\n"
-                        " — `Поднять комнату`\n"
-                        " — `Опустить комнату вниз`\n"
-                        " — `Установить кол-во слотов`\n"
-                        " — `Сменить название`\n"
-                        " — `Кикнуть участника`\n"
-                        " — `Забрать/Выдать доступ участнику`\n"
-                        " — `Замутить/Размутить участника`\n"
-                        " — `Открыть/Закрыть комнату`\n"
-                        " — `Показать/Скрыть комнату`\n"
-                        " — `Передать все права на комнату`\n",
-            color=disnake.Color.dark_embed()
-        )
+        for emoji in [list(buttons.values())]:
+            embed = disnake.Embed(
+                title="Настройки",
+                description="**Выберите, что хотите изменить и нажмите на нужную кнопку**\n"
+                            "\n"
+                            f"{emoji[0]} — `Поднять комнату`\n"
+                            f"{emoji[1]} — `Опустить комнату вниз`\n"
+                            f"{emoji[2]} — `Установить кол-во слотов`\n"
+                            f"{emoji[3]} — `Сменить название`\n"
+                            f"{emoji[4]} — `Кикнуть пользователя`\n"
+                            f"{emoji[5]} — `Забрать/Выдать доступ пользователю`\n"
+                            f"{emoji[6]} — `Замутить/Размутить пользователя`\n"
+                            f"{emoji[7]} — `Открыть/Закрыть комнату`\n"
+                            f"{emoji[8]} — `Показать/Скрыть комнату`\n"
+                            f"{emoji[9]} — `Передать все права на комнату`\n",
+                color=disnake.Color.dark_embed()
+            )
 
         if cur.execute("SELECT COUNT(*) FROM guilds WHERE guild_id=?", (inter.guild.id,)).fetchone()[0] == 0:
             cur.execute(
@@ -78,6 +80,12 @@ class RoomsCommands(commands.Cog):
 
         view = RoomsView()
         await channel_settings.send(embed=embed, view=view)
+
+        embed = disnake.Embed(
+            description="Категория комнат создана",
+            color=disnake.Color.green()
+        )
+        await inter.send(embed=embed, ephemeral=True)
 
 
 def setup(bot: commands.Bot):

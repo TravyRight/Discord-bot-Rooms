@@ -32,7 +32,7 @@ async def rooms_button_slots(inter: disnake.Interaction, room: disnake.VoiceChan
 
     count = modal_inter.text_values[f"{custom_id}.count"]
 
-    if not (count.isdigit()) or 1 > int(count) > 99:
+    if not (count.isdigit()) or not(0 < int(count) < 100):
         await room.edit(user_limit=0)
 
         embed = disnake.Embed(

@@ -6,7 +6,7 @@ from disnake import TextInputStyle
 from config import bot
 
 
-async def rooms_button_kick(inter: disnake.Interaction, room: disnake.VoiceChannel, channel_settings: disnake.TextChannel) -> None:
+async def rooms_button_kick(inter: disnake.Interaction, room: disnake.VoiceChannel, channel_settings: disnake.TextChannel) -> bool:
     await inter.response.defer()
 
     embed = disnake.Embed(
@@ -21,11 +21,14 @@ async def rooms_button_kick(inter: disnake.Interaction, room: disnake.VoiceChann
 
     msg = await inter.followup.send(embed=embed, ephemeral=True)
 
-    message = await bot.wait_for(
-        event="message",
-        check=lambda x: x.author.id == inter.user.id and x.channel.id == channel_settings.id,
-        timeout=60
-    )
+    try:
+        message = await bot.wait_for(
+            event="message",
+            check=lambda x: x.author.id == inter.user.id and x.channel.id == channel_settings.id,
+            timeout=60
+        )
+    except TimeoutError:
+        return False
 
     member = inter.guild.get_member(int(str(message.content)[2:-1]))
 
@@ -33,14 +36,15 @@ async def rooms_button_kick(inter: disnake.Interaction, room: disnake.VoiceChann
         await member.move_to(None)
 
         embed = disnake.Embed(
-            description=f"Участник {member.mention} был кикнут",
+            description=f"Пользователь {member.mention} был кикнут",
             color=disnake.Color.green()
         )
 
     else:
         embed = disnake.Embed(
-            description=f"Участника {member} нет в вашей комнате",
+            description=f"Пользователя {member} нет в вашей комнате",
             color=disnake.Color.red()
         )
 
     await msg.edit(embed=embed)
+    return True

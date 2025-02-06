@@ -45,6 +45,7 @@ class RoomsEvents(commands.Cog):
             rooms.update({member.id: new_channel.id})
 
         if before.channel and before.channel.category.id == data["category_id"] and before.channel.id != data["channel_create_id"] and not before.channel.members:
+            rooms.pop(member.id)
             await before.channel.delete()
 
     @commands.Cog.listener(name="on_message")
@@ -59,69 +60,65 @@ class RoomsEvents(commands.Cog):
         except Exception as e:
             print(e)
 
-    class RoomsViewListener(commands.Cog):
-        def __init__(self, bot):
-            self.bot = bot
+    @commands.Cog.listener("on_button_click")
+    async def rooms_listener(self, inter: disnake.MessageInteraction):
+        custom_id = inter.component.custom_id
 
-        @commands.Cog.listener("on_button_click")
-        async def rooms_listener(self, inter: disnake.MessageInteraction):
-            custom_id = inter.component.custom_id
+        if custom_id not in buttons.keys():
+            return
 
-            if custom_id not in buttons.keys():
-                return
+        if inter.user.id not in rooms.keys():
+            embed = disnake.Embed(
+                description="У вас нет комнаты",
+                color=disnake.Color.red()
+            )
+            await inter.send(embed=embed, ephemeral=True)
+            return
 
-            if inter.user.id not in rooms.keys():
-                embed = disnake.Embed(
-                    description="**У вас нет комнаты",
-                    color=disnake.Color.red()
-                )
-                await inter.send(embed=embed, ephemeral=True)
-                return
+        if custom_id in ["kick", "access", "mute_unmute", "give_room"]:
+            channel_settings_id = int(cur.execute("SELECT channel_settings_id FROM guilds").fetchone()[0])
+            channel_settings = inter.guild.get_channel(channel_settings_id)
 
-            if custom_id in ["kick", "access", "mute_unmute", "give_room"]:
-                channel_settings_id = int(cur.execute("SELECT channel_settings_id FROM guilds").fetchone()[0])
-                channel_settings = inter.guild.get_channel(channel_settings_id)
+            overwrites = channel_settings.overwrites_for(inter.user)
+            overwrites.update(send_messages=True)
 
-                overwrites = channel_settings.overwrites_for(inter.user)
-                overwrites.update(send_messages=True)
+            await channel_settings.set_permissions(
+                target=inter.user,
+                overwrite=overwrites
+            )
 
-                await channel_settings.set_permissions(
-                    target=inter.user,
-                    overwrite=overwrites
-                )
+        elif custom_id in ["up"]:
+            channel_create_id = int(cur.execute("SELECT channel_create_id FROM guilds").fetchone()[0])
+            channel_create = inter.guild.get_channel(channel_create_id)
 
-            elif custom_id in ["up"]:
-                channel_create_id = int(cur.execute("SELECT channel_create_id FROM guilds").fetchone()[0])
-                channel_create = inter.guild.get_channel(channel_create_id)
+        else:
+            channel_settings, channel_create = None, None
 
-            else:
-                channel_settings, channel_create = None, None
+        room = inter.guild.get_channel(rooms[inter.user.id])
 
-            room = inter.guild.get_channel(rooms[inter.user.id])
+        button_functions = {
+            "up": lambda: rooms_button_up(inter, room, channel_create),
+            "slots": lambda: rooms_button_slots(inter, room),
+            "name": lambda: rooms_button_name(inter, room),
+            "kick": lambda: rooms_button_kick(inter, room, channel_settings),
+            "access": lambda: rooms_button_access(inter, room, channel_settings),
+            "down": lambda: rooms_button_down(inter, room),
+            "mute_unmute": lambda: rooms_button_mute_unmute(inter, room, channel_settings),
+            "open_close": lambda: rooms_button_open_close(inter, room),
+            "show_hide": lambda: rooms_button_show_hide(inter, room),
+            "give_room": lambda: rooms_button_give_room(inter, room, channel_settings),
+        }
 
-            button_functions = {
-                "up": lambda: rooms_button_up(inter, room, channel_create),
-                "slots": lambda: rooms_button_slots(inter, room),
-                "name": lambda: rooms_button_name(inter, room),
-                "kick": lambda: rooms_button_kick(inter, room, channel_settings),
-                "access": lambda: rooms_button_access(inter, room, channel_settings),
-                "down": lambda: rooms_button_down(inter, room),
-                "mute_unmute": lambda: rooms_button_mute_unmute(inter, room, channel_settings),
-                "open_close": lambda: rooms_button_open_close(inter, room),
-                "show_hide": lambda: rooms_button_show_hide(inter, room),
-                "give_room": lambda: rooms_button_give_room(inter, room, channel_settings),
-            }
+        answer = await button_functions[custom_id]()
 
-            await button_functions[custom_id]()
+        if custom_id in ["kick", "access", "mute_unmute", "give_room"] or answer is False:
+            overwrites = channel_settings.overwrites_for(inter.user)
+            overwrites.update(send_messages=False)
 
-            if custom_id in ["kick", "access", "mute_unmute", "give_room"]:
-                overwrites = channel_settings.overwrites_for(inter.user)
-                overwrites.update(send_messages=True)
-
-                await channel_settings.set_permissions(
-                    target=inter.user,
-                    overwrite=overwrites
-                )
+            await channel_settings.set_permissions(
+                target=inter.user,
+                overwrite=overwrites
+            )
 
 
 def setup(bot: commands.Bot):

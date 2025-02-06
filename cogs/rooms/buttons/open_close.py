@@ -11,14 +11,14 @@ async def rooms_button_open_close(inter: disnake.Interaction, room: disnake.Voic
     overwrites = room.overwrites_for(inter.guild.default_role)
 
     if overwrites.connect in [True, None]:
-        overwrites.update(speak=False)
+        overwrites.update(connect=False)
         embed = disnake.Embed(
             description="Комната закрыта",
             color=disnake.Color.green()
         )
 
     else:
-        overwrites.update(speak=True)
+        overwrites.update(connect=True)
         embed = disnake.Embed(
             description="Комната открыта",
             color=disnake.Color.green()

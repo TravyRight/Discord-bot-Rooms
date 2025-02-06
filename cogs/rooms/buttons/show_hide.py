@@ -11,16 +11,16 @@ async def rooms_button_show_hide(inter: disnake.Interaction, room: disnake.Voice
     overwrites = room.overwrites_for(inter.guild.default_role)
 
     if overwrites.view_channel in [True, None]:
-        overwrites.update(speak=False)
+        overwrites.update(view_channel=False)
         embed = disnake.Embed(
             description="Комната скрыта",
             color=disnake.Color.green()
         )
 
     else:
-        overwrites.update(speak=True)
+        overwrites.update(view_channel=True)
         embed = disnake.Embed(
-            description="Комната видна всем участникам",
+            description="Комната видна всем пользователям",
             color=disnake.Color.green()
         )
 
