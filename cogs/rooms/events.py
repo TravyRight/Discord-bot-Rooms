@@ -45,7 +45,7 @@ class RoomsEvents(commands.Cog):
             rooms.update({member.id: new_channel.id})
 
         if before.channel and before.channel.category.id == data["category_id"] and before.channel.id != data["channel_create_id"] and not before.channel.members:
-            rooms.pop(member.id)
+            rooms.pop(member.id) if member.id in rooms.keys() else None
             await before.channel.delete()
 
     @commands.Cog.listener(name="on_message")

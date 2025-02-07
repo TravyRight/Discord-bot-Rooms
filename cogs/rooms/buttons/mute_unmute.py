@@ -44,7 +44,7 @@ async def rooms_button_mute_unmute(inter: disnake.Interaction, room: disnake.Voi
 
     if member is None:
         embed = disnake.Embed(
-            description=f"Нет такого пользователя",
+            description=f"Этого пользователя нет на сервере",
             color=disnake.Color.red()
         )
         await msg.edit(embed=embed)
