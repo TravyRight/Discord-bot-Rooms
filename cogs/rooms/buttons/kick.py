@@ -32,7 +32,7 @@ async def rooms_button_kick(inter: disnake.Interaction, room: disnake.VoiceChann
 
     member_id = str(message.content)[2:-1]
 
-    if member_id.isalpha():
+    if not(member_id.isdigit()):
         embed = disnake.Embed(
             description=f"Неверный ID пользователя",
             color=disnake.Color.red()
