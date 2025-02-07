@@ -30,7 +30,26 @@ async def rooms_button_mute_unmute(inter: disnake.Interaction, room: disnake.Voi
     except TimeoutError:
         return False
 
-    member = inter.guild.get_member(int(str(message.content)[2:-1]))
+    member_id = str(message.content)[2:-1]
+
+    if member_id.isalpha():
+        embed = disnake.Embed(
+            description=f"Неверный ID пользователя",
+            color=disnake.Color.red()
+        )
+        await msg.edit(embed=embed)
+        return False
+
+    member = inter.guild.get_member(int(member_id))
+
+    if member is None:
+        embed = disnake.Embed(
+            description=f"Нет такого пользователя",
+            color=disnake.Color.red()
+        )
+        await msg.edit(embed=embed)
+        return False
+
     overwrites = room.overwrites_for(member)
 
     if overwrites.speak in [True, None]:
